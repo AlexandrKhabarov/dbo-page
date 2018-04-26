@@ -1,0 +1,14 @@
+.copyright {
+    position: relative;
+    border: 1px solid black;
+    width: 100%;
+    height: 100px;
+}
+
+.copyright-mark {
+    width: 100%;
+    position: absolute;
+    top: 20%;
+    text-align: center;
+}
+

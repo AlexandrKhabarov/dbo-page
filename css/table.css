@@ -1,0 +1,41 @@
+.table-content {
+    border: 1px solid black;
+    padding: 5px 5px 10px 5px;
+    width: 90%;
+    height: 300px;
+    margin-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.rTable {
+    width: 100%;
+    display: table;
+}
+
+.rTableRow {
+    display: table-row;
+}
+
+.rTableHeading {
+    display: table-header-group;
+}
+
+.rTableBody {
+    display: table-row-group;
+}
+
+.rTableFoot {
+    display: table-footer-group;
+}
+
+.rTableCell, .rTableHead {
+    height: 30px;
+    width: 20%;
+    display: table-cell;
+    border: 1px solid black;
+}
+
+.rTableHead {
+    background-color: #999999;
+}

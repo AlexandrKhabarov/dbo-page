@@ -1,0 +1,39 @@
+.hat {
+    position: relative;
+    width: 100%;
+    height: 100px;
+    border: 1px solid black;
+}
+
+.hat h1 {
+    text-align: left;
+    display: inline-block;
+}
+
+.hat-user-information {
+    position: absolute;
+    height: 100%;
+    display: inline-block;
+    right: 0;
+}
+
+.hat-user-image {
+    position: absolute;
+    right: 50px;
+    top: 15px;
+
+}
+
+.hat-user-image img {
+    width: 70px;
+    height: 70px;
+    right: 20px;
+    border-radius: 50px;
+}
+
+.hat-user-name {
+    position: absolute;
+    top: 15px;
+    right: 130px;
+}
+

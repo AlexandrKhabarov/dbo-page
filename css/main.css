@@ -1,0 +1,12 @@
+@import url("table.css");
+@import url("hat_panel.css");
+@import url("options_panel.css");
+@import url("copyright.css");
+
+
+.container {
+    width: 1000px;
+    height: 1000px;
+}
+
+
