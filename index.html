@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+
+<div class="container">
+    <div class="hat">
+        <h1>My Notes</h1>
+        <div class="hat-user-information">
+            <div class="hat-user-image">
+                <img src="./image/avatar.jpg">
+            </div>
+            <div class="hat-user-name">
+                <p>Ivan Ivanov</p>
+            </div>
+        </div>
+    </div>
+    <div class="options">
+        <form id="options-form">
+            <label for="Date"><input type="checkbox" id="Date"> Date</label>
+            <label for="Time"><input type="checkbox" id="Time"> Time </label>
+            <label for="Type"><input type="checkbox" id="Type"> Type </label>
+            <label for="Incoming"><input type="checkbox" id="Incoming"> Incoming </label>
+            <label for="Outcoming"><input type="checkbox" id="Outcoming"> Outcoming </label>
+        </form>
+    </div>
+
+    <div class="group-option">
+        <label for="selection">Grouping<select id="selection">
+            <option value="Without Grouping">Without Grouping</option>
+            <option value="Incoming">Incoming</option>
+            <option value="Expense">Expense</option>
+        </select></label>
+    </div>
+    <div class="table-content">
+        <table class="content">
+            <thead>
+            <tr>
+                <th>
+                    <p>Date</p>
+                </th>
+                <th>
+                    <p>Time</p>
+                </th>
+                <th>
+                    <p>Type</p>
+                </th>
+                <th>
+                    <p>Incoming</p>
+                </th>
+                <th>
+                    <p>Outcoming</p>
+                </th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>1</td>
+                <td>2</td>
+                <td>3</td>
+                <td>4</td>
+                <td>5</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="copyright">
+        <div class="copyright-mark">
+            <p>Bank of America</p>
+        </div>
+    </div>
+
+</div>
+
+
+<script src="./js/my_statement_data.js"></script>
+</body>
+</html>
