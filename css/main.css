@@ -1,7 +1,7 @@
 @import url("table.css");
-@import url("hat_panel.css");
-@import url("options_panel.css");
-@import url("copyright.css");
+@import url("hat_style.css");
+@import url("options_style.css");
+@import url("copyright_style.css");
 
 
 .container {
