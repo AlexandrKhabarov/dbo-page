@@ -18,16 +18,8 @@
     display: table-row;
 }
 
-.rTableHeading {
-    display: table-header-group;
-}
-
 .rTableBody {
     display: table-row-group;
-}
-
-.rTableFoot {
-    display: table-footer-group;
 }
 
 .rTableCell, .rTableHead {
@@ -35,8 +27,20 @@
     width: 177px;
     display: table-cell;
     border: 1px solid black;
+    text-align: left;
+    vertical-align: center;
 }
 
 .rTableHead {
     background-color: #999999;
+}
+
+.rTableHead p strong {
+    width: 100%;
+    height: 100%;
+}
+
+.rTableCell p strong {
+    width: 100%;
+    height: 100%;
 }
