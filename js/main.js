@@ -25,21 +25,21 @@ window.onload = function () {
 
     }
 
-    let obj = new Map();
+    let order = new Map();
 
     for (let i = 0, ii = myStatementData.length; i < ii; i += 1) {
-        [obj["date"], obj["time"]] = myStatementData[i].date.split("T");
-        obj["type"] = myStatementData[i].type;
+        [order["date"], order["time"]] = myStatementData[i].date.split("T");
+        order["type"] = myStatementData[i].type;
         let am = myStatementData[i].amount;
         if (am >= 0) {
-            obj["incoming"] = am;
-            obj["outcoming"] = 0;
+            order["incoming"] = am;
+            order["outcoming"] = 0;
         } else {
-            obj["outcoming"] = am;
-            obj["incoming"] = 0;
+            order["outcoming"] = am;
+            order["incoming"] = 0;
         }
-        objectTable.push(obj);
-        obj = new Map();
+        objectTable.push(order);
+        order = new Map();
     }
     objectTable.sort(function (a, b) {
         let dateEqua = a.date === b.date;
