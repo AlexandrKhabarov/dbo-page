@@ -21,10 +21,6 @@ window.onload = function () {
         type.disabled = true;
     }
 
-    function blockOneOptions() {
-
-    }
-
     let order = new Map();
 
     for (let i = 0, ii = myStatementData.length; i < ii; i += 1) {
@@ -275,8 +271,6 @@ window.onload = function () {
 
     let toggleFlag = false;
 
-    let divForGroupedTable = document.createElement('div');
-    divForGroupedTable.className = "rTable";
     let grp = table.firstChild;
     grp.remove();
     selectionOpt.onchange = function () {
