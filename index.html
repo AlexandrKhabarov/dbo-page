@@ -6,8 +6,6 @@
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-
-
 <div class="container">
     <div class="hat">
         <h1>My Orders</h1>
@@ -22,58 +20,33 @@
     </div>
     <div class="options">
         <form id="options-form">
-            <label for="Date"><input type="checkbox" id="Date"> Date</label>
-            <label for="Time"><input type="checkbox" id="Time"> Time </label>
-            <label for="Type"><input type="checkbox" id="Type"> Type </label>
-            <label for="Incoming"><input type="checkbox" id="Incoming"> Incoming </label>
-            <label for="Outcoming"><input type="checkbox" id="Outcoming"> Outcoming </label>
+            <label for="Date"><input type="checkbox" id="Date" checked> Date</label>
+            <label for="Time"><input type="checkbox" id="Time" checked> Time </label>
+            <label for="Type"><input type="checkbox" id="Type" checked> Type </label>
+            <label for="Incoming"><input type="checkbox" id="Incoming" checked> Incoming </label>
+            <label for="Outcoming"><input type="checkbox" id="Outcoming" checked> Outcoming </label>
         </form>
     </div>
 
     <div class="group-option">
-        <label for="selection">Grouping<select id="selection">
+        <label for="selectionOpt">Grouping<select id="selectionOpt">
             <option value="Without Grouping">Without Grouping</option>
-            <option value="Incoming">Incoming</option>
-            <option value="Expense">Expense</option>
+            <option value="Date Group">Date Group</option>
         </select></label>
     </div>
 
 
-    <div class="table-content">
-        <div class="rTable" id="table-content">
-            <div class="rTableRow">
-                <div class="rTableHead"><strong>Date</strong></div>
-                <div class="rTableHead"><strong>Time</strong></div>
-                <div class="rTableHead"><strong>Type</strong></div>
-                <div class="rTableHead"><strong>Incoming</strong></div>
-                <div class="rTableHead"><strong>Outcoming</strong></div>
-            </div>
-            <div class="rTableRow">
-                <div class="rTableCell"></div>
-                <div class="rTableCell"></div>
-                <div class="rTableCell"></div>
-                <div class="rTableCell"></div>
-                <div class="rTableCell"></div>
-            </div>
-            <div class="rTableRow">
-                <div class="rTableCell"></div>
-                <div class="rTableCell"></div>
-                <div class="rTableCell"></div>
-                <div class="rTableCell"></div>
-                <div class="rTableCell"></div>
-            </div>
-        </div>
-
+    <div class="table-content" id="table-wrapper">
     </div>
-
     <div class="copyright">
         <div class="copyright-mark">
             <p>Bank of America</p>
         </div>
     </div>
-
 </div>
 <script src="./js/my_statement_data.js"></script>
 <script src="./js/main.js"></script>
 </body>
 </html>
+
+
