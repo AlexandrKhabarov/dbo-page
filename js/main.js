@@ -1,27 +1,9 @@
 window.onload = function () {
     let table = document.getElementById('table-wrapper');
-    let tableHTML = "";
-    let groupedByDateTableHTML = "";
     let objectTable = [];
-    let maxColumn = 5;
 
-    function unBlockOptions() {
-        date.disabled = false;
-        time.disabled = false;
-        incoming.disabled = false;
-        outcoming.disabled = false;
-        type.disabled = false;
-    }
-
-    function blockOptions() {
-        date.disabled = true;
-        time.disabled = true;
-        incoming.disabled = true;
-        outcoming.disabled = true;
-        type.disabled = true;
-    }
-
-    let order = new Map();
+    let order = {};
+    let orderGroupedByDate = {};
 
     for (let i = 0, ii = myStatementData.length; i < ii; i += 1) {
         [order["date"], order["time"]] = myStatementData[i].date.split("T");
@@ -35,76 +17,79 @@ window.onload = function () {
             order["incoming"] = 0;
         }
         objectTable.push(order);
-        order = new Map();
+        order = {};
     }
+
     objectTable.sort(function (a, b) {
-        let dateEqua = a.date === b.date;
-        if (dateEqua)
+        if (a.date === b.date)
             return a.time >= b.time;
         return a.date > b.date;
     });
 
     for (let i = 0, ii = objectTable.length; i < ii; i += 1) {
-        tableHTML += `
-        <div class="rTableRow">\n
-        <div class="rTableCell"><p>${objectTable[i].date}</p></div>\n
-        <div class="rTableCell"><p>${objectTable[i].time}</p></div>\n
-        <div class="rTableCell"><p>${objectTable[i].type}</p></div>\n
-        <div class="rTableCell"><p>${objectTable[i].incoming}</p></div>\n
-        <div class="rTableCell"><p>${objectTable[i].outcoming}</p></div>\n
-        </div>`;
-    }
-
-    let groupedByDate = new Map();
-
-    for (let i = 0, ii = objectTable.length; i < ii; i += 1) {
-        if (groupedByDate[objectTable[i]['date']] !== undefined) {
-            groupedByDate[objectTable[i]['date']]['incoming'] += objectTable[i]['incoming'];
-            groupedByDate[objectTable[i]['date']]['outcoming'] += objectTable[i]['outcoming'];
+        if (objectTable[i]['date'] in orderGroupedByDate) {
+            orderGroupedByDate[objectTable[i]['date']]['incoming'] += objectTable[i]['incoming'];
+            orderGroupedByDate[objectTable[i]['date']]['outcoming'] += objectTable[i]['outcoming'];
         } else {
-            let grpDate = new Map();
+            let grpDate = {};
             grpDate['incoming'] = objectTable[i]['incoming'];
             grpDate['outcoming'] = objectTable[i]['outcoming'];
-            groupedByDate[objectTable[i]['date']] = grpDate;
+            orderGroupedByDate[objectTable[i]['date']] = grpDate;
         }
     }
 
-    for (m in groupedByDate) {
-        groupedByDateTableHTML += `
+    let createTable = function (content) {
+        let tableFill = document.createElement("div");
+        tableFill.className = "rTable";
+        tableFill.id = "table-content";
+        tableFill.innerHTML = (`
             <div class="rTableRow">\n
-            <div class="rTableCell"><p>${m}</p></div>\n
-            <div class="rTableCell"><p></p></div>\n
-            <div class="rTableCell"><p></p></div>\n
-            <div class="rTableCell"><p>${groupedByDate[m].incoming}</p></div>\n
-            <div class="rTableCell"><p>${groupedByDate[m].outcoming}</p></div>\n
-            </div>\n
-       `;
+            <div class="rTableHead"><strong>Date</strong></div>\n
+            <div class="rTableHead"><strong>Time</strong></div>\n
+            <div class="rTableHead"><strong>Type</strong></div>\n
+            <div class="rTableHead"><strong>Incoming</strong></div>\n
+            <div class="rTableHead"><strong>Outcoming</strong></div>\n
+            </div>\n` + content
+        );
+        return tableFill;
+    };
+
+    var makeTableRow = function (date, time, type, incoming, outcoming) {
+        return `<div class="rTableRow">\n
+        <div class="rTableCell"><p>${date || ""}</p></div>\n
+        <div class="rTableCell"><p>${time || ""}</p></div>\n
+        <div class="rTableCell"><p>${type || ""}</p></div>\n
+        <div class="rTableCell"><p>${incoming || ""}</p></div>\n
+        <div class="rTableCell"><p>${outcoming || ""}</p></div>\n
+        </div>`;
     }
 
-    let tableContent = document.createElement('div');
-    tableContent.className = "rTable";
-    tableContent.id = "table-content";
-    tableContent.innerHTML = (`
-    <div class="rTableRow">\n
-    <div class="rTableHead"><strong>Date</strong></div>\n
-    <div class="rTableHead"><strong>Time</strong></div>\n
-    <div class="rTableHead"><strong>Type</strong></div>\n
-    <div class="rTableHead"><strong>Incoming</strong></div>\n
-    <div class="rTableHead"><strong>Outcoming</strong></div>\n
-    </div>\n` + tableHTML);
-    table.appendChild(tableContent);
+    let tableHTML = "";
+    let groupedByDateTableHTML = "";
 
-    let tableGroupedContent = document.createElement('div');
-    tableGroupedContent.className = "rTable";
-    tableGroupedContent.id = "table-content";
-    tableGroupedContent.innerHTML = (`
-    <div class="rTableRow">\n
-    <div class="rTableHead"><strong>Date</strong></div>\n
-    <div class="rTableHead"><strong>Time</strong></div>\n
-    <div class="rTableHead"><strong>Type</strong></div>\n
-    <div class="rTableHead"><strong>Incoming</strong></div>\n
-    <div class="rTableHead"><strong>Outcoming</strong></div>\n
-    </div>\n` + groupedByDateTableHTML);
+    for (let i = 0, ii = objectTable.length; i < ii; i += 1) {
+        tableHTML += makeTableRow(
+            objectTable[i].date,
+            objectTable[i].time,
+            objectTable[i].type,
+            objectTable[i].incoming,
+            objectTable[i].outcoming
+        );
+    }
+
+    for (let orderDate in orderGroupedByDate) {
+        groupedByDateTableHTML += makeTableRow(
+            orderDate,
+            undefined,
+            undefined,
+            orderGroupedByDate[orderDate].incoming,
+            orderGroupedByDate[orderDate].outcoming
+        );
+    }
+
+    let tableContent = createTable(tableHTML);
+    table.appendChild(tableContent);
+    let tableGroupedContent = createTable(groupedByDateTableHTML);
 
     let time = document.getElementById("Time");
     let date = document.getElementById("Date");
@@ -117,177 +102,102 @@ window.onload = function () {
     let typeFlag = false;
     let incomingFlag = false;
     let outcomingFlag = false;
+    let maxColumn = 5;
+
+    let toggleAllOptions = function (toggle) {
+        date.disabled = toggle;
+        time.disabled = toggle;
+        incoming.disabled = toggle;
+        outcoming.disabled = toggle;
+        type.disabled = toggle;
+    };
+
+    let toggleOneOption = function (checkbox) {
+        if (maxColumn === 2) {
+            if (!incomingFlag && checkbox !== incoming) {
+                incoming.disabled = true;
+            } else if (!dateFlag && checkbox !== date) {
+                date.disabled = true;
+            } else if (!typeFlag && checkbox !== type) {
+                type.disabled = true;
+            } else if (!outcomingFlag && checkbox !== outcoming) {
+                outcoming.disabled = true;
+            } else if (!timeFlag && checkbox !== time) {
+                time.disabled = true;
+            }
+        }
+    };
+
+    let displayColumn = function (divs, num, flag) {
+        if (flag === false && maxColumn > 1) {
+            for (let i = num, ii = divs.length; i < ii; i += 5) {
+                divs[i].firstChild.style.display = "none";
+            }
+            flag = true;
+            maxColumn -= 1;
+        } else if (flag === true && maxColumn >= 1) {
+            for (let i = num, ii = divs.length; i < ii; i += 5) {
+                divs[i].firstChild.style.display = "inline";
+            }
+            flag = false;
+            toggleAllOptions(false);
+            if (maxColumn !== 5) {
+                maxColumn += 1;
+            }
+        }
+        return flag
+    };
+
+    let divs = table.getElementsByClassName("rTableCell");
 
     time.addEventListener('click', function () {
-        if (maxColumn === 2) {
-            if (!incomingFlag) {
-                incoming.disabled = true;
-            } else if (!dateFlag) {
-                date.disabled = true;
-            } else if (!typeFlag) {
-                type.disabled = true;
-            } else if (!outcomingFlag) {
-                outcoming.disabled = true;
-            }
-        }
-        let divs = table.getElementsByClassName('rTableCell');
-        if (timeFlag === false && maxColumn > 1) {
-            for (let i = 1, ii = divs.length; i < ii; i += 5) {
-                divs[i].firstChild.style.display = "none";
-            }
-            timeFlag = true;
-            maxColumn -= 1;
-        } else if (timeFlag === true && maxColumn >= 1) {
-            for (let i = 1, ii = divs.length; i < ii; i += 5) {
-                divs[i].firstChild.style.display = "inline";
-            }
-            timeFlag = false;
-            unBlockOptions();
-            if (maxColumn !== 5) {
-                maxColumn += 1;
-            }
-        }
+        toggleOneOption(time);
+        timeFlag = displayColumn(divs, 1, timeFlag);
     });
     date.addEventListener('click', function () {
-        let divs = table.getElementsByClassName('rTableCell');
-        if (dateFlag === false && maxColumn > 1) {
-            if (maxColumn === 2) {
-                if (!incomingFlag) {
-                    incoming.disabled = true;
-                } else if (!timeFlag) {
-                    time.disabled = true;
-                } else if (!typeFlag) {
-                    type.disabled = true;
-                } else if (!outcomingFlag) {
-                    outcoming.disabled = true;
-                }
-            }
-            for (let i = 0, ii = divs.length; i < ii; i += 5) {
-                divs[i].firstChild.style.display = "none";
-            }
-            dateFlag = true;
-            maxColumn -= 1;
-        } else if (dateFlag === true && maxColumn >= 1) {
-            for (let i = 0, ii = divs.length; i < ii; i += 5) {
-                divs[i].firstChild.style.display = "inline";
-            }
-            unBlockOptions();
-            dateFlag = false;
-            if (maxColumn !== 5) {
-                maxColumn += 1;
-            }
-        }
+        toggleOneOption(date);
+        dateFlag = displayColumn(divs, 0, dateFlag);
     });
     type.addEventListener('click', function () {
-        let divs = table.getElementsByClassName('rTableCell');
-        if (typeFlag === false && maxColumn > 1) {
-            if (maxColumn === 2) {
-                if (!incomingFlag) {
-                    incoming.disabled = true;
-                } else if (!timeFlag) {
-                    time.disabled = true;
-                } else if (!dateFlag) {
-                    date.disabled = true;
-                } else if (!outcomingFlag) {
-                    outcoming.disabled = true;
-                }
-            }
-            for (let i = 2, ii = divs.length; i < ii; i += 5) {
-                divs[i].firstChild.style.display = "none";
-            }
-            typeFlag = true;
-            maxColumn -= 1;
-        } else if (typeFlag === true && maxColumn >= 1) {
-            for (let i = 2, ii = divs.length; i < ii; i += 5) {
-                divs[i].firstChild.style.display = "inline";
-            }
-            unBlockOptions();
-            typeFlag = false;
-            if (maxColumn !== 5) {
-                maxColumn += 1;
-            }
-        }
+        toggleOneOption(type);
+        typeFlag = displayColumn(divs, 2, typeFlag);
+
     });
     outcoming.addEventListener('click', function () {
-        let divs = table.getElementsByClassName('rTableCell');
-        if (outcomingFlag === false && maxColumn > 1) {
-            if (maxColumn === 2) {
-                if (!incomingFlag) {
-                    incoming.disabled = true;
-                } else if (!timeFlag) {
-                    time.disabled = true;
-                } else if (!dateFlag) {
-                    date.disabled = true;
-                } else if (!typeFlag) {
-                    type.disabled = true;
-                }
-            }
-            for (let i = 4, ii = divs.length; i < ii; i += 5) {
-                divs[i].firstChild.style.display = "none";
-            }
-            outcomingFlag = true;
-            maxColumn -= 1;
-        } else if (outcomingFlag === true && maxColumn >= 1) {
-            for (let i = 4, ii = divs.length; i < ii; i += 5) {
-                divs[i].firstChild.style.display = "inline";
-            }
-            unBlockOptions();
-            outcomingFlag = false;
-            if (maxColumn !== 5) {
-                maxColumn += 1;
-            }
-        }
+        toggleOneOption(outcoming);
+        outcomingFlag = displayColumn(divs, 4, outcomingFlag);
     });
     incoming.addEventListener('click', function () {
-        let divs = table.getElementsByClassName('rTableCell');
-        if (incomingFlag === false && maxColumn > 1) {
-            if (maxColumn === 2) {
-                if (!typeFlag) {
-                    type.disabled = true;
-                } else if (!timeFlag) {
-                    time.disabled = true;
-                } else if (!dateFlag) {
-                    date.disabled = true;
-                } else if (!outcomingFlag) {
-                    outcoming.disabled = true;
-                }
-            }
-            for (let i = 3, ii = divs.length; i < ii; i += 5) {
-                divs[i].firstChild.style.display = "none";
-            }
-            incomingFlag = true;
-            maxColumn -= 1;
-        } else if (incomingFlag === true && maxColumn >= 1) {
-            for (let i = 3, ii = divs.length; i < ii; i += 5) {
-                divs[i].firstChild.style.display = "inline";
-            }
-            unBlockOptions();
-            incomingFlag = false;
-            if (maxColumn !== 5) {
-                maxColumn += 1;
-            }
-        }
+        toggleOneOption(incoming);
+        incomingFlag = displayColumn(divs, 3, incomingFlag);
     });
 
-    let toggleFlag = false;
 
     let grp = table.firstChild;
     grp.remove();
+    let tableWrapper = document.getElementById("table-wrapper");
+
+    let toggleSelection = function (tableData, flag) {
+        grp = table.firstChild;
+        grp.remove();
+        table.appendChild(tableData);
+        toggleAllOptions(flag);
+    };
+
+    let posGroupTableY = 0,
+        posTableY = 0;
+
     selectionOpt.onchange = function () {
         let selectionOpt = document.getElementById("selectionOpt");
-        if (((selectionOpt.options[selectionOpt.selectedIndex].value) === "Date Group") && (toggleFlag === false)) {
-            grp = table.firstChild;
-            grp.remove();
-            table.appendChild(tableGroupedContent);
-            blockOptions();
-            toggleFlag = true;
-        } else if (((selectionOpt.options[selectionOpt.selectedIndex].value) === "Without Grouping") && (toggleFlag === true)) {
-            grp = table.firstChild;
-            grp.remove();
-            table.appendChild(tableContent);
-            unBlockOptions();
-            toggleFlag = false;
+        if ((selectionOpt.options[selectionOpt.selectedIndex].value) === "Date Group") {
+            posTableY = tableWrapper.scrollTop;
+            toggleSelection(tableGroupedContent, true);
+            tableWrapper.scrollTo(0, posGroupTableY);
+        } else if ((selectionOpt.options[selectionOpt.selectedIndex].value) === "Without Grouping") {
+            posGroupTableY = tableWrapper.scrollTop;
+            toggleSelection(tableContent, false);
+            tableWrapper.scrollTo(0, posTableY);
         }
-    };
+    }
 };
 

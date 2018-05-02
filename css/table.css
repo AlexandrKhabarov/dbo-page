@@ -12,14 +12,10 @@
 .rTable {
     width: 100%;
     display: block;
-    /*display: table;*/
 }
 
 .rTableRow {
-    /*display: table-row;*/
     clear: both;
-    /*width: 100%;*/
-    /*height: 40px;*/
 }
 
 .rTableBody {
