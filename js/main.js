@@ -6,15 +6,15 @@ window.onload = function () {
     let orderGroupedByDate = {};
 
     for (let i = 0, ii = myStatementData.length; i < ii; i += 1) {
-        [order["date"], order["time"]] = myStatementData[i].date.split("T");
-        order["type"] = myStatementData[i].type;
+        [order.date, order.time] = myStatementData[i].date.split("T");
+        order.type = myStatementData[i].type;
         let am = myStatementData[i].amount;
         if (am >= 0) {
-            order["incoming"] = am;
-            order["outcoming"] = 0;
+            order.incoming = am;
+            order.outcoming = 0;
         } else {
-            order["outcoming"] = am;
-            order["incoming"] = 0;
+            order.outcoming = am;
+            order.incoming = 0;
         }
         objectTable.push(order);
         order = {};
@@ -27,14 +27,14 @@ window.onload = function () {
     });
 
     for (let i = 0, ii = objectTable.length; i < ii; i += 1) {
-        if (objectTable[i]['date'] in orderGroupedByDate) {
-            orderGroupedByDate[objectTable[i]['date']]['incoming'] += objectTable[i]['incoming'];
-            orderGroupedByDate[objectTable[i]['date']]['outcoming'] += objectTable[i]['outcoming'];
+        if (objectTable[i].date in orderGroupedByDate) {
+            orderGroupedByDate[objectTable[i].date].incoming += objectTable[i].incoming;
+            orderGroupedByDate[objectTable[i].date].outcoming += objectTable[i].outcoming;
         } else {
             let grpDate = {};
-            grpDate['incoming'] = objectTable[i]['incoming'];
-            grpDate['outcoming'] = objectTable[i]['outcoming'];
-            orderGroupedByDate[objectTable[i]['date']] = grpDate;
+            grpDate.incoming = objectTable[i].incoming;
+            grpDate.outcoming = objectTable[i].outcoming;
+            orderGroupedByDate[objectTable[i].date] = grpDate;
         }
     }
 
