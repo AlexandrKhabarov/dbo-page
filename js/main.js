@@ -206,17 +206,23 @@ window.onload = function () {
 
     let displayColumn = function (cellDivs, headDivs, num, flag) {
         if (flag === false && maxColumn > 1) {
+
             headDivs[num].style.display = "none";
-            for (let i = num, ii = cellDivs.length; i < ii; i += 5) {
-                cellDivs[i].style.display = "none";
-            }
+            Array.from(cellDivs).forEach(function(div, index) {
+                if ((index - num) % 5 === 0)
+                    div.style.display = "none"
+            });
+
             flag = true;
             maxColumn -= 1;
         } else if (flag === true && maxColumn >= 1) {
+
             headDivs[num].style.display = "inline";
-            for (let i = num, ii = cellDivs.length; i < ii; i += 5) {
-                cellDivs[i].style.display = "inline";
-            }
+            Array.from(cellDivs).forEach(function (div, index) {
+                if ((index-num) % 5 === 0)
+                    div.style.display = "inline";
+            });
+
             flag = false;
             toggleAllOptions(false);
             if (maxColumn !== 5) {
