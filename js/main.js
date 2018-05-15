@@ -9,9 +9,9 @@ window.onload = function () {
 
             let order = {};
 
-            [order.date, order.time] = item.date.split("T");
+            [order.dateMoney, order.timeMoney] = item.date.split("T");
 
-            order.type = item.type;
+            order.typeMoney = item.type;
 
             let am = item.amount;
 
@@ -25,20 +25,20 @@ window.onload = function () {
     });
 
     objectTable.sort(function (a, b) {
-        if (a.date === b.date)
-            return a.time >= b.time;
-        return a.date > b.date;
+        if (a.dateMoney === b.dateMoney)
+            return a.timeMoney >= b.timeMoney;
+        return a.dateMoney > b.dateMoney;
     });
 
     objectTable.forEach(function (item) {
-        if (item.date in orderGroupedByDate) {
-            orderGroupedByDate[item.date].incoming += item.incoming;
-            orderGroupedByDate[item.date].outComing += item.outcoming;
+        if (item.dateMoney in orderGroupedByDate) {
+            orderGroupedByDate[item.dateMoney].incoming += item.incoming;
+            orderGroupedByDate[item.dateMoney].outComing += item.outcoming;
         } else {
             let grpDate = {};
             grpDate.incoming = item.incoming;
             grpDate.outcoming = item.outcoming;
-            orderGroupedByDate[item.date] = grpDate;
+            orderGroupedByDate[item.dateMoney] = grpDate;
         }
     });
 
@@ -101,7 +101,7 @@ window.onload = function () {
         return tableFill;
     };
 
-    let makeTableRow = function (date, time, type, incoming, outComing) {
+    let makeTableRow = function (dateMoney, timeMoney, typeMoney, incoming, outComing) {
 
         let rTableRow = document.createElement("div");
         rTableRow.className = "rTableRow";
@@ -109,19 +109,19 @@ window.onload = function () {
         let rTableCellDate = document.createElement("div");
         let pDate = document.createElement("p");
         rTableCellDate.className = 'rTableCell';
-        pDate.innerText = (date !== "") ? new Date(date).toLocaleDateString('ru-RU').replace(/\//g, '.') : "";
+        pDate.innerText = (dateMoney !== "") ? new Date(dateMoney).toLocaleDateString('ru-RU').replace(/\//g, '.') : "";
         rTableCellDate.appendChild(pDate);
 
         let rTableCellTime = document.createElement("div");
         let pTime = document.createElement("p");
         rTableCellTime.className = 'rTableCell';
-        pTime.innerText = time || "";
+        pTime.innerText = timeMoney || "";
         rTableCellTime.appendChild(pTime);
 
         let rTableCellType = document.createElement("div");
         let pType = document.createElement("p");
         rTableCellType.className = 'rTableCell';
-        pType.innerText = type || "";
+        pType.innerText = typeMoney || "";
         rTableCellType.appendChild(pType);
 
         let rTableCellIncoming = document.createElement("div");
@@ -153,7 +153,7 @@ window.onload = function () {
 
     objectTable.map(
         item => makeTableRow(
-            item.date, item.time, item.type, item.incoming, item.outcoming)
+            item.dateMoney, item.timeMoney, item.typeMoney, item.incoming, item.outcoming)
     ).forEach(function (item) {
         tableBody.appendChild(item);
     });
