@@ -1,24 +1,28 @@
 window.onload = function () {
-    let table = document.getElementById('table-wrapper');
-    let objectTable = [];
 
-    let order = {};
+    let table = document.getElementById('table-wrapper');
+
+    let objectTable = [];
     let orderGroupedByDate = {};
 
-    for (let i = 0, ii = myStatementData.length; i < ii; i += 1) {
-        [order.date, order.time] = myStatementData[i].date.split("T");
-        order.type = myStatementData[i].type;
-        let am = myStatementData[i].amount;
-        if (am >= 0) {
-            order.incoming = am;
-            order.outcoming = 0;
-        } else {
-            order.outcoming = am;
-            order.incoming = 0;
+    myStatementData.map(item => {
+
+            let order = {};
+
+            [order.date, order.time] = item.date.split("T");
+
+            order.type = item.type;
+
+            let am = item.amount;
+
+            order.incoming = am >= 0 ? am : 0;
+            order.outcoming = am < 0 ? am : 0;
+
+            return order;
         }
-        objectTable.push(order);
-        order = {};
-    }
+    ).forEach(function (item) {
+        objectTable.push(item)
+    });
 
     objectTable.sort(function (a, b) {
         if (a.date === b.date)
@@ -26,17 +30,17 @@ window.onload = function () {
         return a.date > b.date;
     });
 
-    for (let i = 0, ii = objectTable.length; i < ii; i += 1) {
-        if (objectTable[i].date in orderGroupedByDate) {
-            orderGroupedByDate[objectTable[i].date].incoming += objectTable[i].incoming;
-            orderGroupedByDate[objectTable[i].date].outComing += objectTable[i].outcoming;
+    objectTable.forEach(function (item) {
+        if (item.date in orderGroupedByDate) {
+            orderGroupedByDate[item.date].incoming += item.incoming;
+            orderGroupedByDate[item.date].outComing += item.outcoming;
         } else {
             let grpDate = {};
-            grpDate.incoming = objectTable[i].incoming;
-            grpDate.outcoming = objectTable[i].outcoming;
-            orderGroupedByDate[objectTable[i].date] = grpDate;
+            grpDate.incoming = item.incoming;
+            grpDate.outcoming = item.outcoming;
+            orderGroupedByDate[item.date] = grpDate;
         }
-    }
+    });
 
     let createTable = function () {
         let tableFill = document.createElement("div");
@@ -82,7 +86,16 @@ window.onload = function () {
         rTableRow.appendChild(rTableHeadIncoming);
         rTableRow.appendChild(rTableHeadOutComing);
 
-        tableFill.appendChild(rTableRow);
+        let rTableHeading = document.createElement("div");
+        rTableHeading.className = "rTableHeading";
+
+        rTableHeading.appendChild(rTableRow);
+
+        tableFill.appendChild(rTableHeading);
+
+        let rTableBody = document.createElement("div");
+        rTableBody.className = "rTableBody";
+        tableFill.appendChild(rTableBody);
 
         return tableFill;
     };
@@ -95,7 +108,7 @@ window.onload = function () {
         let rTableCellDate = document.createElement("div");
         let pDate = document.createElement("p");
         rTableCellDate.className = 'rTableCell';
-        pDate.innerText = date || "";
+        pDate.innerText = (date !== "") ? new Date(date).toLocaleDateString('ru-RU').replace(/\//g, '.') : "";
         rTableCellDate.appendChild(pDate);
 
         let rTableCellTime = document.createElement("div");
@@ -112,14 +125,14 @@ window.onload = function () {
 
         let rTableCellIncoming = document.createElement("div");
         let pIncoming = document.createElement("p");
-        rTableCellIncoming.className = 'rTableCell';
-        pIncoming.innerText = incoming || "";
+        rTableCellIncoming.className = 'rTableCell incoming';
+        pIncoming.innerText = (incoming.toLocaleString('ru-RU') !== "0") ? incoming.toLocaleString('ru-RU') + "₽" : "";
         rTableCellIncoming.appendChild(pIncoming);
 
         let rTableCellOutComing = document.createElement("div");
         let pOutComing = document.createElement("p");
-        rTableCellOutComing.className = 'rTableCell';
-        pOutComing.innerText = outComing || "";
+        rTableCellOutComing.className = 'rTableCell outComing';
+        pOutComing.innerText = (outComing.toLocaleString('ru-RU') !== "0") ? outComing.toLocaleString('ru-RU') + "₽" : "";
         rTableCellOutComing.appendChild(pOutComing);
 
         rTableRow.appendChild(rTableCellDate);
@@ -134,13 +147,16 @@ window.onload = function () {
     let tableHead = createTable();
     let tableHeadGrouped = createTable();
 
+    let tableBody = tableHead.lastChild;
+    let tableGroupBody = tableHeadGrouped.lastChild;
+
     let tableContent = objectTable.map(
         item => makeTableRow(
             item.date, item.time, item.type, item.incoming, item.outcoming)
     );
 
     tableContent.forEach(function (item) {
-        tableHead.appendChild(item)
+        tableBody.appendChild(item);
     });
 
     let groupedByDateTableHTML = Object.keys(orderGroupedByDate).map(
@@ -148,8 +164,8 @@ window.onload = function () {
             key, undefined, undefined, orderGroupedByDate[key].incoming, orderGroupedByDate[key].outcoming)
     );
 
-    groupedByDateTableHTML.forEach( function (item) {
-        tableHeadGrouped.appendChild(item);
+    groupedByDateTableHTML.forEach(function (item) {
+        tableGroupBody.appendChild(item);
     });
 
     table.appendChild(tableHead);
@@ -164,7 +180,7 @@ window.onload = function () {
     let dateFlag = false;
     let typeFlag = false;
     let incomingFlag = false;
-    let outcomingFlag = false;
+    let outComingFlag = false;
     let maxColumn = 5;
 
     let toggleAllOptions = function (toggle) {
@@ -183,7 +199,7 @@ window.onload = function () {
                 date.disabled = true;
             } else if (!typeFlag && checkbox !== type) {
                 type.disabled = true;
-            } else if (!outcomingFlag && checkbox !== outComing) {
+            } else if (!outComingFlag && checkbox !== outComing) {
                 outComing.disabled = true;
             } else if (!timeFlag && checkbox !== time) {
                 time.disabled = true;
@@ -191,16 +207,18 @@ window.onload = function () {
         }
     };
 
-    let displayColumn = function (divs, num, flag) {
+    let displayColumn = function (cellDivs, headDivs, num, flag) {
         if (flag === false && maxColumn > 1) {
-            for (let i = num, ii = divs.length; i < ii; i += 5) {
-                divs[i].firstChild.style.display = "none";
+            headDivs[num].style.display = "none";
+            for (let i = num, ii = cellDivs.length; i < ii; i += 5) {
+                cellDivs[i].style.display = "none";
             }
             flag = true;
             maxColumn -= 1;
         } else if (flag === true && maxColumn >= 1) {
-            for (let i = num, ii = divs.length; i < ii; i += 5) {
-                divs[i].firstChild.style.display = "inline";
+            headDivs[num].style.display = "inline";
+            for (let i = num, ii = cellDivs.length; i < ii; i += 5) {
+                cellDivs[i].style.display = "inline";
             }
             flag = false;
             toggleAllOptions(false);
@@ -211,34 +229,35 @@ window.onload = function () {
         return flag
     };
 
-    let divs = table.getElementsByClassName("rTableCell");
+    let tableDivCell = table.getElementsByClassName("rTableCell");
+    let tableDivHead = table.getElementsByClassName("rTableHead");
 
     time.addEventListener('click', function () {
         toggleOneOption(time);
-        timeFlag = displayColumn(divs, 1, timeFlag);
+        timeFlag = displayColumn(tableDivCell, tableDivHead, 1, timeFlag);
     });
     date.addEventListener('click', function () {
         toggleOneOption(date);
-        dateFlag = displayColumn(divs, 0, dateFlag);
+        dateFlag = displayColumn(tableDivCell, tableDivHead, 0, dateFlag);
     });
     type.addEventListener('click', function () {
         toggleOneOption(type);
-        typeFlag = displayColumn(divs, 2, typeFlag);
+        typeFlag = displayColumn(tableDivCell, tableDivHead, 2, typeFlag);
 
     });
     outComing.addEventListener('click', function () {
         toggleOneOption(outComing);
-        outcomingFlag = displayColumn(divs, 4, outcomingFlag);
+        outComingFlag = displayColumn(tableDivCell, tableDivHead, 4, outComingFlag);
     });
     incoming.addEventListener('click', function () {
         toggleOneOption(incoming);
-        incomingFlag = displayColumn(divs, 3, incomingFlag);
+        incomingFlag = displayColumn(tableDivCell, tableDivHead, 3, incomingFlag);
     });
 
 
     let grp = table.firstChild;
     grp.remove();
-    let tableWrapper = document.getElementById("table-wrapper");
+    let rTableBody = document.getElementsByClassName("rTableBody")[0];
 
     let toggleSelection = function (tableData, flag) {
         grp = table.firstChild;
@@ -253,13 +272,15 @@ window.onload = function () {
     selectionOpt.onchange = function () {
         let selectionOpt = document.getElementById("selectionOpt");
         if ((selectionOpt.options[selectionOpt.selectedIndex].value) === "Date Group") {
-            posTableY = tableWrapper.scrollTop;
+            posTableY = rTableBody.scrollTop;
+            console.log(posTableY);
             toggleSelection(tableHeadGrouped, true);
-            tableWrapper.scrollTo(0, posGroupTableY);
+            rTableBody.scrollTo(0, posGroupTableY);
         } else if ((selectionOpt.options[selectionOpt.selectedIndex].value) === "Without Grouping") {
-            posGroupTableY = tableWrapper.scrollTop;
+            posGroupTableY = rTableBody.scrollTop;
+            console.log(posGroupTableY);
             toggleSelection(tableHead, false);
-            tableWrapper.scrollTo(0, posTableY);
+            rTableBody.scrollTo(0, posTableY);
         }
     }
 };
